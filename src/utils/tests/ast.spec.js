@@ -2,6 +2,7 @@ import { findBestMatchExpression } from "../ast";
 
 import getSymbols from "../../workers/parser/getSymbols";
 import { getSource } from "../../workers/parser/tests/helpers";
+import { parseScript } from "../../workers/parser/utils/ast";
 
 describe("find the best expression for the token", () => {
   it("should find the identifier", () => {
@@ -14,6 +15,13 @@ describe("find the best expression for the token", () => {
       "key"
     );
     expect(expression).toMatchSnapshot();
+  });
+
+  it.only("test babylon7", () => {
+    const time = Date.now();
+    const source = getSource("debugger");
+    getSymbols(source);
+    console.log(Date.now() - time);
   });
 
   it("should find the expression for the property", () => {

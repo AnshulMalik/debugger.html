@@ -14,8 +14,7 @@ import type { Source } from "debugger-html";
 let ASTs = new Map();
 
 function _parse(code, opts) {
-  const t0 = performance.now();
-  const parsed = babylon.parse(code, {
+  return babylon.parse(code, {
     ...opts,
     sourceType: "module",
     plugins: [
@@ -32,9 +31,6 @@ function _parse(code, opts) {
       "templateInvalidEscapes"
     ]
   });
-  const t1 = performance.now();
-  console.log("Took", (t1 - t0).toFixed(4), "millisecodns");
-  return parsed;
 }
 
 function parse(text: ?string, opts?: Object) {
