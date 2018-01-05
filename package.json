@@ -69,7 +69,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-traverse": "^6.26.0",
     "babel-types": "^6.26.0",
-    "babylon": "^6.18.0",
+    "babylon": "^7.0.0-beta.36",
     "codemirror": "^5.28.0",
     "devtools-components": "^0.0.2",
     "devtools-launchpad": "^0.0.112",
