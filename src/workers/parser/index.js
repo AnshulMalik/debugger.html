@@ -12,79 +12,72 @@ import type { Location, Source, SourceId } from "../../types";
 import type { SourceScope } from "./getScopes/visitor";
 import type { SymbolDeclarations } from "./getSymbols";
 
-export type Task = (...rest: Array<any>) => Promise<any>;
+export type Task = (...rest: any[]) => Promise<any>;
 
 type Dispatcher = {
   start: (path: string) => void,
   stop: () => void,
-  task: (workerName: string) => Task
+  task: (workerName: string) => Task,
+  invoke: (workerName: string, ...rest: any[]) => Promise<any>
 };
 
 const dispatcher: Dispatcher = new WorkerDispatcher();
 export const start = dispatcher.start.bind(dispatcher);
 export const stop = dispatcher.stop.bind(dispatcher);
 
-export const findOutOfScopeLocations = ((dispatcher.task(
-  "findOutOfScopeLocations"
-): any): (sourceId: string, position: AstPosition) => Promise<AstLocation[]>);
+export const findOutOfScopeLocations = async (
+  sourceId: string,
+  position: AstPosition
+): Promise<AstLocation[]> =>
+  dispatcher.invoke("findOutOfScopeLocations", sourceId, position);
 
-export const getNextStep = ((dispatcher.task("getNextStep"): any): (
+export const getNextStep = async (
   sourceId: SourceId,
   pausedPosition: AstPosition
-) => Promise<?Location>);
+): Promise<?Location> =>
+  dispatcher.invoke("getNextStep", sourceId, pausedPosition);
 
-export const clearASTs = ((dispatcher.task("clearASTs"): any): () => Promise<
-  void
->);
+export const clearASTs = async (): Promise<void> =>
+  dispatcher.invoke("clearASTs");
 
-export const getScopes = ((dispatcher.task("getScopes"): any): (
-  location: Location
-) => Promise<SourceScope[]>);
+export const getScopes = async (location: Location): Promise<SourceScope[]> =>
+  dispatcher.invoke("getScopes", location);
 
-export const clearScopes = ((dispatcher.task(
-  "clearScopes"
-): any): () => Promise<void>);
+export const clearScopes = async (): Promise<void> =>
+  dispatcher.invoke("clearScopes");
 
-export const clearSymbols = ((dispatcher.task(
-  "clearSymbols"
-): any): () => Promise<void>);
+export const clearSymbols = async (): Promise<void> =>
+  dispatcher.invoke("clearSymbols");
 
-export const getSymbols = ((dispatcher.task("getSymbols"): any): (
+export const getSymbols = async (
   sourceId: string
-) => Promise<SymbolDeclarations>);
+): Promise<SymbolDeclarations> => dispatcher.invoke("getSymbols", sourceId);
 
-export const hasSource = ((dispatcher.task("hasSource"): any): (
-  sourceId: SourceId
-) => Promise<Source>);
+export const hasSource = async (sourceId: SourceId): Promise<Source> =>
+  dispatcher.invoke("hasSource", sourceId);
 
-export const setSource = ((dispatcher.task("setSource"): any): (
-  source: Source
-) => Promise<void>);
+export const setSource = async (source: Source): Promise<void> =>
+  dispatcher.invoke("setSource", source);
 
-export const clearSources = ((dispatcher.task(
-  "clearSources"
-): any): () => Promise<void>);
+export const clearSources = async (): Promise<void> =>
+  dispatcher.invoke("clearSources");
 
-export const hasSyntaxError = ((dispatcher.task("hasSyntaxError"): any): (
-  input: string
-) => Promise<string | false>);
+export const hasSyntaxError = async (input: string): Promise<string | false> =>
+  dispatcher.invoke("hasSyntaxError", input);
 
-export const mapOriginalExpression = ((dispatcher.task(
-  "mapOriginalExpression"
-): any): (
+export const mapOriginalExpression = async (
   expression: string,
   mappings: {
     [string]: string | null
   }
-) => Promise<string>);
+): Promise<string> =>
+  dispatcher.invoke("mapOriginalExpression", expression, mappings);
 
-export const getFramework = ((dispatcher.task("getFramework"): any): (
-  sourceId: string
-) => Promise<?string>);
+export const getFramework = async (sourceId: string): Promise<?string> =>
+  dispatcher.invoke("getFramework", sourceId);
 
-export const getPausePoints = ((dispatcher.task("getPausePoints"): any): (
-  sourceId: string
-) => Promise<PausePoints>);
+export const getPausePoints = async (sourceId: string): Promise<PausePoints> =>
+  dispatcher.invoke("getPausePoints", sourceId);
 
 export type {
   SourceScope,
