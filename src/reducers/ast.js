@@ -222,7 +222,7 @@ export function getPausePoint(
   }
 
   const linePoints = pausePoints[String(line)];
-  if (linePoints && column != null) {
+  if (linePoints && column) {
     return linePoints[String(column)];
   }
 }
