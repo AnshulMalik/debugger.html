@@ -12,18 +12,9 @@ import type { Location, Source, SourceId } from "../../types";
 import type { SourceScope } from "./getScopes/visitor";
 import type { SymbolDeclarations } from "./getSymbols";
 
-export type Task = (...rest: any[]) => Promise<any>;
-
-type Dispatcher = {
-  start: (path: string) => void,
-  stop: () => void,
-  task: (workerName: string) => Task,
-  invoke: (workerName: string, ...rest: any[]) => Promise<any>
-};
-
-const dispatcher: Dispatcher = new WorkerDispatcher();
-export const start = dispatcher.start.bind(dispatcher);
-export const stop = dispatcher.stop.bind(dispatcher);
+const dispatcher = new WorkerDispatcher();
+export const start = (url: string) => dispatcher.start(url);
+export const stop = () => dispatcher.stop();
 
 export const findOutOfScopeLocations = async (
   sourceId: string,
