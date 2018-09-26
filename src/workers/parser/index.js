@@ -56,13 +56,23 @@ export const clearSources = async (): Promise<void> =>
 export const hasSyntaxError = async (input: string): Promise<string | false> =>
   dispatcher.invoke("hasSyntaxError", input);
 
-export const mapOriginalExpression = async (
+export const mapExpression = async (
   expression: string,
   mappings: {
     [string]: string | null
-  }
-): Promise<string> =>
-  dispatcher.invoke("mapOriginalExpression", expression, mappings);
+  } | null,
+  bindings: string[],
+  shouldMapBindings?: boolean,
+  shouldMapAwait?: boolean
+): Promise<{ expression: string }> =>
+  dispatcher.invoke(
+    "mapExpression",
+    expression,
+    mappings,
+    bindings,
+    shouldMapBindings,
+    shouldMapAwait
+  );
 
 export const getFramework = async (sourceId: string): Promise<?string> =>
   dispatcher.invoke("getFramework", sourceId);
