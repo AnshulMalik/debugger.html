@@ -18,8 +18,8 @@ function WorkerDispatcher() {
 }
 
 WorkerDispatcher.prototype = {
-  start(url, win = window) {
-    this.worker = new win.Worker(url);
+  start(url: string, win = window) {
+    this.worker = new Worker(url);
     this.worker.onerror = () => {
       console.error(`Error in worker ${url}`);
     };
@@ -34,7 +34,10 @@ WorkerDispatcher.prototype = {
     this.worker = null;
   },
 
-  task(method, { queue = false } = {}) {
+  task(
+    method: string,
+    { queue = false } = {}
+  ): (...args: any[]) => Promise<any> {
     const calls = [];
     const push = (args: Array<any>) => {
       return new Promise((resolve, reject) => {
@@ -91,6 +94,10 @@ WorkerDispatcher.prototype = {
     };
 
     return (...args: any) => push(args);
+  },
+
+  invoke(method: string, ...args: any[]): Promise<any> {
+    return this.task(method)(...args);
   }
 };
 
