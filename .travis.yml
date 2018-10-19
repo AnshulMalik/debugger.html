@@ -6,6 +6,6 @@ services:
 before_install:
   - export SHELL=/bin/bash
   - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-  - docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE . &
+  - docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE:f66e525e6978 . &
   - while [ -e /proc/$! ]; do echo -n "."  && sleep 60; done
-  - docker push $DOCKER_USERNAME/$DOCKER_IMAGE
+  - docker push $DOCKER_USERNAME/$DOCKER_IMAGE:f66e525e6978
