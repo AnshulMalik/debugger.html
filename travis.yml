@@ -18,12 +18,14 @@ notifications:
       - $HOME/firefox/mochitest.log
 
 install:
-  - docker run -td -v $(pwd):/app --name container $DOCKER_USERNAME/$DOCKER_IMAGE:f66e525e6978
-  - docker exec node app/bin/copy --mc ../firefox
-  - docker exec node app/bin/ci/check-file-sizes.js
+  - ./bin/ci/setup-docker.sh
+  - docker run -td -v $(pwd):/app --name container $DOCKER_USERNAME/$DOCKER_IMAGE:$MC_COMMIT
+  - docker exec container yarn
+  - docker exec container node ./bin/copy --mc ../firefox
+  - docker exec container node ./bin/ci/check-file-sizes.js
 
 script:
-  - docker exec app/node_modules/.bin/mochii --ci --mc ../firefox --headless
+  - docker exec container ./node_modules/.bin/mochii --ci --mc ../firefox --headless
     browser_browser_toolbox_debugger
     browser_keybindings_01.js
     browser_toolbox_getpanelwhenready.js
@@ -36,4 +38,4 @@ script:
     browser_webconsole_location_debugger_link.js
     browser_webconsole_stacktrace_location_debugger_link.js
     browser_webconsole_sourcemap_nosource
-  - app/node_modules/.bin/mochii --ci --mc ../firefox --headless devtools/client/debugger/new
+  - docker exec container ./node_modules/.bin/mochii --ci --mc ../firefox --headless devtools/client/debugger/new

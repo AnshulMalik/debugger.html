@@ -11,14 +11,15 @@ RUN apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
 xz-utils tk-dev libffi-dev liblzma-dev
 
-RUN apt install -y zlib1g-dev
-
-RUN apt install -y autoconf2.13 sshpass p7zip-full python-dev
-
-RUN export MC_COMMIT='f66e525e6978'
+RUN apt install -y zlib1g-dev unzip zip autoconf2.13 sshpass p7zip-full python-dev
 RUN curl https://bootstrap.pypa.io/get-pip.py | python
-ADD bin /setup/bin/
 RUN apt install -y mercurial
 
+ENV SHELL /bin/bash 
+ADD bin /setup/bin/
+
+# it will need MC_COMMIT var from the environment
 RUN /setup/bin/ci/clone-gecko.sh
 RUN /setup/bin/ci/build-firefox.sh
+
+WORKDIR /app
