@@ -1,0 +1,39 @@
+sudo: required
+language: generic
+services:
+  - docker
+
+env:
+  global:
+    - DISPLAY=':99.0'
+    - YARN_VERSION='1.9.4'
+    - MC_COMMIT='f66e525e6978' # https://hg.mozilla.org/mozilla-central/shortlog
+
+notifications:
+  slack:
+    on_success: never
+    on_failure: always
+  artifacts:
+    paths:
+      - $HOME/firefox/mochitest.log
+
+install:
+  - docker run -td -v $(pwd):/app --name container $DOCKER_USERNAME/$DOCKER_IMAGE:f66e525e6978
+  - docker exec node app/bin/copy --mc ../firefox
+  - docker exec node app/bin/ci/check-file-sizes.js
+
+script:
+  - docker exec app/node_modules/.bin/mochii --ci --mc ../firefox --headless
+    browser_browser_toolbox_debugger
+    browser_keybindings_01.js
+    browser_toolbox_getpanelwhenready.js
+    browser_markup_links_06.js
+    browser_net_open_in_debugger.js
+    browser_net_view-source-debugger.js
+    browser_jsterm_autocomplete_in_debugger_stackframe.js
+    browser_webconsole_eval_in_debugger_stackframe1.js
+    browser_webconsole_eval_in_debugger_stackframe2.js
+    browser_webconsole_location_debugger_link.js
+    browser_webconsole_stacktrace_location_debugger_link.js
+    browser_webconsole_sourcemap_nosource
+  - app/node_modules/.bin/mochii --ci --mc ../firefox --headless devtools/client/debugger/new
