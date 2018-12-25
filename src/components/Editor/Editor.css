@@ -125,6 +125,12 @@ html[dir="rtl"] .editor-mount {
   background: var(--theme-selection-background-hover);
 }
 
+.CodeMirror-gutter-background.blackboxed-function {
+  left: 0px !important;
+  width: 4px !important;
+  background-color: #8c8c8c !important;
+}
+
 .editor.new-breakpoint svg {
   fill: var(--breakpoint-fill);
   stroke: var(--breakpoint-stroke);

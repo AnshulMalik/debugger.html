@@ -17,6 +17,16 @@ export type LoadSourceAction = PromiseAction<
 export type SourceAction =
   | LoadSourceAction
   | {|
+      +type: "BLACKBOX_FUNCTION",
+      +sourceId: string,
+      +func: any
+    |}
+  | {|
+      +type: "UNBLACKBOX_FUNCTION",
+      +sourceId: string,
+      +func: any
+    |}
+  | {|
       +type: "ADD_SOURCE",
       +source: Source
     |}

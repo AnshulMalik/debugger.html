@@ -9,7 +9,7 @@
  * @module actions/sources
  */
 
-import { isOriginalId } from "devtools-source-map";
+import { isOriginalId, originalToGeneratedId } from "devtools-source-map";
 import { recordEvent } from "../../utils/telemetry";
 import { features } from "../../utils/prefs";
 
@@ -36,6 +36,38 @@ export function toggleBlackBox(source: Source) {
       type: "BLACKBOX",
       source,
       [PROMISE]: promise
+    });
+  };
+}
+
+export function blackboxFunction(sourceId, func) {
+  return ({ dispatch, getState, client }: ThunkArgs) => {
+    let id = sourceId;
+    if (isOriginalId(sourceId)) {
+      id = originalToGeneratedId(sourceId);
+    }
+
+    return dispatch({
+      type: "BLACKBOX_FUNCTION",
+      func,
+      sourceId,
+      [PROMISE]: client.blackBox(id, false, func.location)
+    });
+  };
+}
+
+export function unblackboxFunction(sourceId, func) {
+  return ({ dispatch, getState, client }: ThunkArgs) => {
+    let id = sourceId;
+    if (isOriginalId(sourceId)) {
+      id = originalToGeneratedId(sourceId);
+    }
+
+    return dispatch({
+      type: "UNBLACKBOX_FUNCTION",
+      func,
+      sourceId,
+      [PROMISE]: client.blackBox(id, true, func.location)
     });
   };
 }

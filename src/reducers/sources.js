@@ -33,6 +33,7 @@ export type SourcesState = {
   sources: SourcesMap,
   urls: UrlsMap,
   relativeSources: SourcesMap,
+  blackboxedFunctions: { [string]: Array<any> },
   pendingSelectedLocation?: PendingSelectedLocation,
   selectedLocation: ?SourceLocation,
   projectDirectoryRoot: string
@@ -42,6 +43,7 @@ export function initialSourcesState(): SourcesState {
   return {
     sources: {},
     urls: {},
+    blackboxedFunctions: {},
     relativeSources: {},
     selectedLocation: undefined,
     pendingSelectedLocation: prefs.pendingSelectedLocation,
@@ -72,6 +74,36 @@ function update(
   let location = null;
 
   switch (action.type) {
+    case "BLACKBOX_FUNCTION": {
+      if (action.status !== "done") {
+        return state;
+      }
+
+      const { func, sourceId } = action;
+      const existing = state.blackboxedFunctions;
+      if (existing[sourceId]) {
+        existing[sourceId] = [...existing[sourceId], func];
+      } else {
+        existing[sourceId] = [func];
+      }
+      return { ...state, blackboxedFunctions: existing };
+    }
+    case "UNBLACKBOX_FUNCTION": {
+      if (action.status !== "done") {
+        return state;
+      }
+      const { func, sourceId } = action;
+      const existing = state.blackboxedFunctions;
+
+      // if (existing[sourceId]) {
+      const index = existing[sourceId].findIndex(f => f === func);
+      if (index >= 0) {
+        existing[sourceId].splice(index, 1);
+        existing[sourceId] = [...existing[sourceId]];
+      }
+      // }
+      return { ...state, blackboxedFunctions: existing };
+    }
     case "UPDATE_SOURCE": {
       const source = action.source;
       return updateSources(state, [source]);
@@ -509,6 +541,10 @@ export function getProjectDirectoryRoot(state: OuterState): string {
 
 export function getRelativeSources(state: OuterState): SourcesMap {
   return state.sources.relativeSources;
+}
+
+export function getBlackboxedFunctions(state: OuterState, sourceId: string) {
+  return state.sources.blackboxedFunctions[sourceId];
 }
 
 export default update;

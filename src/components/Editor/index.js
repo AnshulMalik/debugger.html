@@ -67,6 +67,7 @@ import "./Highlight.css";
 
 import type SourceEditor from "../../utils/editor/source-editor";
 import type { SymbolDeclarations } from "../../workers/parser";
+import HighlightFunctions from "./HighlightFunctions";
 import type { SourceLocation, Source } from "../../types";
 
 const cssVars = {
@@ -577,7 +578,8 @@ class Editor extends PureComponent<Props, State> {
         <HighlightLine />
         <EmptyLines editor={editor} />
         <Breakpoints editor={editor} />
-        <Preview editor={editor} editorRef={this.$editorWrapper} />;
+        <Preview editor={editor} editorRef={this.$editorWrapper} />
+        <HighlightFunctions editor={editor} />
         <Footer editor={editor} horizontal={horizontal} />
         <HighlightLines editor={editor} />
         <EditorMenu editor={editor} />

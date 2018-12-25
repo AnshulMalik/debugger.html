@@ -26,7 +26,8 @@ import {
   getPrettySource,
   getSelectedLocation,
   getSelectedSource,
-  getSymbols
+  getSymbols,
+  getBlackboxedFunctions
 } from "../../selectors";
 
 import actions from "../../actions";
@@ -51,7 +52,10 @@ function getMenuItems(
     selectedLocation,
     selectedSource,
     showSource,
-    toggleBlackBox
+    toggleBlackBox,
+    blackboxFunction,
+    unblackboxFunction,
+    blackboxedFunctions
   }
 ) {
   // variables
@@ -60,7 +64,7 @@ function getMenuItems(
   const isPrettyPrinted = isPretty(selectedSource);
   const isPrettified = isPrettyPrinted || hasPrettyPrint;
   const isMapped = isOriginal || hasSourceMap;
-  const { line } = editor.codeMirror.coordsChar({
+  const { line, ch } = editor.codeMirror.coordsChar({
     left: event.clientX,
     top: event.clientY
   });
@@ -150,6 +154,22 @@ function getMenuItems(
     }
   };
 
+  const func = getFunctionLocation(sourceLine, ch);
+  const isBlackboxed =
+    func && blackboxedFunctions && blackboxedFunctions.find(f => f == func);
+  const blackboxFunctionItem = {
+    id: "node-menu-blackbox-function",
+    label: isBlackboxed ? "unblackbox" : "blackbox-function",
+    disabled: !func,
+    click: () => {
+      if (isBlackboxed) {
+        unblackboxFunction(selectedLocation.sourceId, func);
+      } else {
+        blackboxFunction(selectedLocation.sourceId, func);
+      }
+    }
+  };
+
   const jumpToMappedLocationItem = {
     id: "node-menu-jump",
     label: jumpToMappedLocLabel,
@@ -200,6 +220,7 @@ function getMenuItems(
     copySourceItem,
     copySourceUri2Item,
     copyFunctionItem,
+    blackboxFunctionItem,
     { type: "separator" },
     jumpToMappedLocationItem,
     showSourceMenuItem,
@@ -251,11 +272,12 @@ const mapStateToProps = state => {
     hasPrettyPrint: !!getPrettySource(state, selectedSource.id),
     contextMenu: getContextMenu(state),
     getFunctionText: line => findFunctionText(line, selectedSource, symbols),
-    getFunctionLocation: line =>
+    getFunctionLocation: (line, column = Infinity) =>
       findClosestFunction(symbols, {
         line,
-        column: Infinity
-      })
+        column
+      }),
+    blackboxedFunctions: getBlackboxedFunctions(state, selectedSource.id)
   };
 };
 
@@ -266,7 +288,9 @@ const {
   jumpToMappedLocation,
   setContextMenu,
   showSource,
-  toggleBlackBox
+  toggleBlackBox,
+  blackboxFunction,
+  unblackboxFunction
 } = actions;
 
 const mapDispatchToProps = {
@@ -276,7 +300,9 @@ const mapDispatchToProps = {
   jumpToMappedLocation,
   setContextMenu,
   showSource,
-  toggleBlackBox
+  toggleBlackBox,
+  blackboxFunction,
+  unblackboxFunction
 };
 
 export default connect(
