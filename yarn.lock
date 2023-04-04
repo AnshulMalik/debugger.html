@@ -3851,6 +3851,13 @@ devtools-license-check@^0.7.0:
   dependencies:
     license-checker "^9.0.3"
 
+devtools-license-check@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/devtools-license-check/-/devtools-license-check-0.9.0.tgz#cf54ca0f5166d9ce371995b294beb497c3871ed6"
+  integrity sha512-OAlhrMrWguJVCDAAxKkSTmAs2y8XnDBbcPpugSY5xoVAgJaEF4qVYAjNnoSJtMNhy9+zCnGU6kYnJEc6ZLoG/A==
+  dependencies:
+    license-checker "^9.0.3"
+
 devtools-linters@^0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/devtools-linters/-/devtools-linters-0.0.4.tgz#ab5bea591bd8d04830a40c6d95035fbb1157df87"
